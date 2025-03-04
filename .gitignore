@@ -9,3 +9,4 @@ __pycache__/
 trained_models/checkpoints/
 
 trained_models/backup/
+.venv/

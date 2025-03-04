@@ -10,25 +10,25 @@ class DataProperty():
         self.type = type
 
 columns = [
-    DataProperty(17, 'Family'),
-    DataProperty(20, 'Genus'),
-    DataProperty(62, 'Species'),
-    DataProperty(31, 'Subspecies'),
-    DataProperty(25, 'Higher Classification'),
-    DataProperty(61, 'Sex'),
-    DataProperty(10, 'Latitude', float),
-    DataProperty(11, 'Longitude', float),
-    DataProperty(8, 'Country'),
-    DataProperty(59, 'Name'),
-    DataProperty(60, 'Name Author'),
-    DataProperty(9, 'Day'),
-    DataProperty(50, 'Month'),
-    DataProperty(70, 'Year'),
+    DataProperty(31, 'Family'),
+    DataProperty(34, 'Genus'),
+    DataProperty(60, 'Species'),
+    # DataProperty(31, 'Subspecies'),
+    DataProperty(35, 'Higher Classification'),
+    DataProperty(59, 'Sex'),
+    DataProperty(25, 'Latitude', float),
+    DataProperty(26, 'Longitude', float),
+    DataProperty(22, 'Country'),
+    # DataProperty(59, 'Name'),
+    # DataProperty(60, 'Name Author'),
+    # DataProperty(9, 'Day'),
+    # DataProperty(50, 'Month'),
+    DataProperty(69, 'Year'),
     DataProperty(0, 'id', int),
-    DataProperty(51, 'Occurence ID'),
+    DataProperty(47, 'Occurence ID'),
 ]
 
-file = open('data/occurrence.csv', 'r')
+file = open('data/resource.csv', 'r')
 reader = csv.reader(file)
 reader_iterator = iter(reader)
 column_names = next(reader_iterator)
@@ -36,12 +36,14 @@ column_names = next(reader_iterator)
 row_by_id = {}
 
 row_index = 0
-progress = tqdm(total=1039840, desc='Reading occurence.csv')
+progress = tqdm(total=8557, desc='Reading resource.csv')
+
+image_ids = []
 
 for row in reader_iterator:
     id = int(row[0])
     progress.update()
-    if 'lepidoptera' not in row[25].lower():
+    if 'lepidoptera' not in row[49].lower():
             continue
     for data_property in columns:
         data_property.values.append(row[data_property.column].strip())
@@ -49,29 +51,14 @@ for row in reader_iterator:
     row_by_id[id] = row_index
     row_index += 1
 
-strings = []
-name_ids = {}
-
-file = open('data/multimedia.csv', 'r')
-reader = csv.reader(file)
-reader_iterator = iter(reader)
-column_names = next(reader_iterator)
-
-progress = tqdm(total=2126980, desc='Reading multimedia.csv')
-
-image_ids = []
-
-for row in reader_iterator:
-    progress.update()
-    id = int(row[0])
-    image = row[5].split('/')[-3]
-    title = row[2]
-    if '_label_' in title:
+    image = row[6].split(' | ')[0]
+    title = row[11].split(' | ')[0]
+    if 'label' in title:
         continue
-    if row[3] != 'image/jpeg':
-        continue
-    if id not in row_by_id:
-        continue
+    # if row[3] != 'image/jpeg':
+    #     continue
+    # if id not in row_by_id:
+    #     continue
     image_ids.append((image, id))
 
 with open(METADATA_FILE_NAME, 'w') as file:
